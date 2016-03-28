@@ -107,6 +107,12 @@ boolean try_key(MFRC522::MIFARE_Key *key)
     byte status;
     
     display.setCursor(0, 16);
+    for (uint8_t i = 0; i < 6; i++) {
+        for (uint8_t j = 0; i < 22; i++)
+            display.println(F(" "));
+        display.println();
+    }
+    display.setCursor(0, 16);
     display.println(F("Auth with key:"));
     dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
     display.display();
@@ -121,7 +127,13 @@ boolean try_key(MFRC522::MIFARE_Key *key)
     status = mfrc522.MIFARE_Read(block, buffer, &byteCount);
     if (status == MFRC522::STATUS_OK) {
         // Successful read
-        display.setCursor(0, 16);      
+        display.setCursor(0, 16);
+        for (uint8_t i = 0; i < 6; i++) {
+            for (uint8_t j = 0; i < 22; i++)
+                display.println(F(" "));
+            display.println();
+        }
+        display.setCursor(0, 16);     
         result = true;
         display.print(F("Success with key:"));
         dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
@@ -391,6 +403,13 @@ void RFIDCrack() {
     delay(2000);
 
     display.setCursor(0, 16);
+    for (uint8_t i = 0; i < 6; i++) {
+        for (uint8_t j = 0; i < 22; i++)
+            display.println(F(" "));
+        display.println();
+    }
+    display.setCursor(0, 16);
+        
     display.println(F("DO NOT PRESS"));
     display.println(F("  ANY KEY!"));
     display.display();
@@ -411,6 +430,12 @@ void RFIDCrack() {
         }
         // Try the key
         if (try_key(&key)) {
+            display.setCursor(0, 16);
+            for (uint8_t i = 0; i < 6; i++) {
+                for (uint8_t j = 0; i < 22; i++)
+                    display.println(F(" "));
+                display.println();
+            }
             display.setCursor(0, 16);
             display.print(F("Success with key:"));
             dump_byte_array(key.keyByte, MFRC522::MF_KEY_SIZE);
