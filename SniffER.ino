@@ -106,12 +106,12 @@ boolean try_key(MFRC522::MIFARE_Key *key)
     byte block = 0;
     byte status;
     
-    display.setCursor(0, 16);
-    for (uint8_t i = 0; i < 6; i++) {
-        for (uint8_t j = 0; i < 22; i++)
-            display.println(F(" "));
-        display.println();
-    }
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(31, 0);
+    display.setTextColor(BLACK, WHITE);
+    display.println(F("RFID Crack"));
+    display.setTextColor(WHITE);
     display.setCursor(0, 16);
     display.println(F("Auth with key:"));
     dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
@@ -127,13 +127,13 @@ boolean try_key(MFRC522::MIFARE_Key *key)
     status = mfrc522.MIFARE_Read(block, buffer, &byteCount);
     if (status == MFRC522::STATUS_OK) {
         // Successful read
-        display.setCursor(0, 16);
-        for (uint8_t i = 0; i < 6; i++) {
-            for (uint8_t j = 0; i < 22; i++)
-                display.println(F(" "));
-            display.println();
-        }
-        display.setCursor(0, 16);     
+        display.clearDisplay();
+        display.setTextSize(1);
+        display.setCursor(31, 0);
+        display.setTextColor(BLACK, WHITE);
+        display.println(F("RFID Crack"));
+        display.setTextColor(WHITE);
+        display.setCursor(0, 16);    
         result = true;
         display.print(F("Success with key:"));
         dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
@@ -143,6 +143,7 @@ boolean try_key(MFRC522::MIFARE_Key *key)
         dump_byte_array(buffer, 16);
         display.println();
         display.display();
+        delay(2000);
     }
     
     mfrc522.PICC_HaltA();       // Halt PICC
@@ -402,17 +403,18 @@ void RFIDCrack() {
     display.display();
     delay(2000);
 
-    display.setCursor(0, 16);
-    for (uint8_t i = 0; i < 6; i++) {
-        for (uint8_t j = 0; i < 22; i++)
-            display.println(F(" "));
-        display.println();
-    }
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(31, 0);
+    display.setTextColor(BLACK, WHITE);
+    display.println(F("RFID Crack"));
+    display.setTextColor(WHITE);
     display.setCursor(0, 16);
         
     display.println(F("DO NOT PRESS"));
     display.println(F("  ANY KEY!"));
     display.display();
+    delay(1000);
     
     // Try the known default keys
     MFRC522::MIFARE_Key key; byte tmpByte = 0x00; int tmpRnd = 0;
@@ -422,6 +424,19 @@ void RFIDCrack() {
         tmpRnd = max(tmpRnd, analogRead(A6) + analogRead(A7));
         delay(10);
     }
+
+    display.clearDisplay();
+    display.setTextSize(1);
+    display.setCursor(31, 0);
+    display.setTextColor(BLACK, WHITE);
+    display.println(F("RFID Crack"));
+    display.setTextColor(WHITE);
+    display.setCursor(0, 16);
+    display.println(F("Crack start!"));
+    display.println(F("CANCEL to break"));
+    display.display();
+    delay(2000);
+    
     
     while (true) {
         for (byte i = 0; i < MFRC522::MF_KEY_SIZE; i++) {
@@ -429,13 +444,20 @@ void RFIDCrack() {
             delay(10);
         }
         // Try the key
+        display.clearDisplay();
+        display.setTextSize(1);
+        display.setCursor(31, 0);
+        display.setTextColor(BLACK, WHITE);
+        display.println(F("RFID Crack"));
+        display.setTextColor(WHITE);
+        display.setCursor(0, 16);
         if (try_key(&key)) {
-            display.setCursor(0, 16);
-            for (uint8_t i = 0; i < 6; i++) {
-                for (uint8_t j = 0; i < 22; i++)
-                    display.println(F(" "));
-                display.println();
-            }
+            display.clearDisplay();
+            display.setTextSize(1);
+            display.setCursor(31, 0);
+            display.setTextColor(BLACK, WHITE);
+            display.println(F("RFID Crack"));
+            display.setTextColor(WHITE);
             display.setCursor(0, 16);
             display.print(F("Success with key:"));
             dump_byte_array(key.keyByte, MFRC522::MF_KEY_SIZE);
@@ -444,6 +466,7 @@ void RFIDCrack() {
             display.display();
             while (!(GetKey() & KEY_OK));
         }
+        if (GetKey() & KEY_CANCEL) break;
     }
 }
 
