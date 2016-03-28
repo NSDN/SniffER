@@ -413,7 +413,7 @@ void RFIDCrack() {
         if (try_key(&key)) {
             display.setCursor(0, 16);
             display.print(F("Success with key:"));
-            dump_byte_array((*key).keyByte, MFRC522::MF_KEY_SIZE);
+            dump_byte_array(key.keyByte, MFRC522::MF_KEY_SIZE);
             display.println();
             display.println(F("OK for return"));
             display.display();
