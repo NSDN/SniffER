@@ -392,7 +392,7 @@ void RFIDCrack() {
     if ( ! mfrc522.PICC_ReadCardSerial())
         return;
     
-    display.setCursor(0, 16);    
+    display.println();    
     // Show some details of the PICC (that is: the tag/card)
     display.print(F("Card UID:"));
     dump_byte_array(mfrc522.uid.uidByte, mfrc522.uid.size);
@@ -414,14 +414,19 @@ void RFIDCrack() {
     display.println(F("DO NOT PRESS"));
     display.println(F("  ANY KEY!"));
     display.display();
-    delay(1000);
     
     // Try the known default keys
-    MFRC522::MIFARE_Key key; byte tmpByte = 0x00; int tmpRnd = 0;
+    MFRC522::MIFARE_Key key; int rndMax = 0, rndMin = 0;
 
-    tmpRnd = analogRead(A6) + analogRead(A7);
+    rndMin = analogRead(A6) + analogRead(A7);
     for (uint8_t i = 0; i < 100; i++) {
-        tmpRnd = max(tmpRnd, analogRead(A6) + analogRead(A7));
+        rndMin = min(rndMin, analogRead(A6) + analogRead(A7));
+        delay(10);
+    }
+    
+    rndMax = analogRead(A6) + analogRead(A7);
+    for (uint8_t i = 0; i < 100; i++) {
+        rndMax = max(rndMax, analogRead(A6) + analogRead(A7));
         delay(10);
     }
 
@@ -440,7 +445,7 @@ void RFIDCrack() {
     
     while (true) {
         for (byte i = 0; i < MFRC522::MF_KEY_SIZE; i++) {
-            key.keyByte[i] = (byte)map(analogRead(A6) + analogRead(A7), 0, tmpRnd, 0, 0xFF);
+            key.keyByte[i] = (byte)map(analogRead(A6) + analogRead(A7), rndMin, rndMax, 0x00, 0xFF);
             delay(10);
         }
         // Try the key
